@@ -3,19 +3,19 @@ let fruits: string[] = ["Apple", "Banana", "Peach", "Watermelon"];
 
 // for...of loop access only array values
 for (let fruit of fruits) {
-  //   console.log(`Fruit is ${fruit}`);
+  console.log(`Fruit is ${fruit}`);
 }
 
 // for ... of over array of numbers
 let numbers: number[] = [10, 20, 30, 40];
 
-// for (let number of numbers) {
-//   if (number > 20) {
-//     console.log(`Number is ${number}`);
-//   } else {
-//     console.log(`${number} plus 5 is ${number + 5}`);
-//   }
-// }
+for (let number of numbers) {
+  if (number > 20) {
+    console.log(`Number is ${number}`);
+  } else {
+    console.log(`${number} plus 5 is ${number + 5}`);
+  }
+}
 
 // for ... of over string
 let message: string = "Hello world!";
@@ -38,7 +38,7 @@ const student: Student = { name: "Pesho", lastName: "Petrov", age: 20 };
 
 for (let key in student) {
   // accessing object value by passing object key as keyof Student
-  //   console.log(`${key} = ${student[key as keyof Student]}`);
+  console.log(`${key} = ${student[key as keyof Student]}`);
 }
 
 //for...in over array
@@ -46,12 +46,12 @@ let numsArr: number[] = [35, 25, 45, 50];
 
 for (let index in numsArr) {
   // accessing array value by passing array index
-  //   console.log(`${index} = ${numsArr[index]}`);
+  console.log(`${index} = ${numsArr[index]}`);
 }
 
 // for loop
 for (let i = 0; i <= 5; i++) {
-  //   console.log(`Index ${i}`);
+  console.log(`Index ${i}`);
 }
 
 // for loop over array
@@ -67,12 +67,12 @@ for (let i = 0; i < numbersArr.length; i++) {
 
 // for loop incrementation
 for (let i = 0; i < 10; i++) {
-  //   console.log(i);
+  console.log(i);
 }
 
 // for loop decrementation
 for (let i = 30; i >= 0; i--) {
-  //   console.log(i);
+  console.log(i);
 }
 
 export {};
