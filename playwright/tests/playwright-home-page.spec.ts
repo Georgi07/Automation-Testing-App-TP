@@ -1,67 +1,70 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, Page } from "@playwright/test";
+import path from "path";
 
-test.describe("Playwright home page testing", () => {
-  test.beforeEach("Navigate to the home page", async ({ page }) => {
-    const url = process.env.BASE_URL as string;
-    await page.goto(url, { timeout: 60000 });
+interface Results {
+  username: string;
+  password: string;
+  dropdownValue: string;
+}
+
+const results = {
+  username: "testuser",
+  password: "password",
+  dropdownValue: "dd3",
+};
+
+const fillFormFields = async (page: Page) => {
+  const usernameInput = page.locator("xpath=//input[@name='username']");
+  await expect(usernameInput).toBeVisible();
+  await usernameInput.fill("testUser");
+  await expect(usernameInput).toHaveValue("testUser");
+
+  const checkboxEl = page.locator('xpath=//input[@value="cb2"]');
+  await expect(checkboxEl).toBeVisible();
+  await checkboxEl.check();
+  await expect(checkboxEl).toBeChecked();
+
+  const dropdown = page.locator('xpath=//select[@name="dropdown"]');
+  await expect(dropdown).toBeVisible();
+  await dropdown.selectOption("dd2");
+  await expect(dropdown).toHaveValue("dd2");
+
+  const fileInput = page.locator('xpath=//input[@type="file"]');
+  const filePath = path.resolve(__dirname, "./tests.txt");
+  await fileInput.setInputFiles(filePath);
+};
+
+test.describe("Testing Web Form", () => {
+  test.beforeEach("Open Form Web Page", async ({ page }) => {
+    await page.goto(
+      "https://testpages.herokuapp.com/styled/basic-html-form-test.html"
+    );
   });
 
-  test("Has logo exist", async ({ page }) => {
-    // get image by alt text
-    const logo = page.getByAltText("Playwright logo").first();
+  test("Cancel and reset the form", async ({ page }) => {
+    await fillFormFields(page);
+    const cancelBtn = page.locator('xpath=//input[@type="reset"]');
+    await cancelBtn.click();
 
-    await expect(logo).toBeVisible();
+    await expect(page.locator("xpath=//input[@name='username']")).toHaveValue(
+      ""
+    );
   });
 
-  test("Has heading exist", async ({ page }) => {
-    // locate heading one by locator tag name
-    const headingTitle = page.locator("h1");
-    // log in the test results located element value
-    console.log((await headingTitle.innerText()).valueOf());
+  test("Submit and proceed to form details", async ({ page }) => {
+    await fillFormFields(page);
+    const submitBtn = page.locator('xpath=//input[@type="submit"]');
+    await submitBtn.click();
 
-    await expect(headingTitle).toBeVisible();
-  });
+    await expect(page).toHaveURL(
+      "https://testpages.herokuapp.com/styled/the_form_processor.php"
+    );
+    const title = page.locator("xpath=//h1");
+    await expect(title).toHaveText("Processed Form Details");
 
-  test("Have nav links exist", async ({ page }) => {
-    // locate nav link Docs by role and text
-    const docsLink = page.getByRole("link", { name: "Docs" });
-    const apiLink = page.getByRole("link", { name: "API" });
-
-    await expect(docsLink).toBeVisible();
-    await expect(apiLink).toBeVisible();
-  });
-
-  test("Click Community nav link and check the path", async ({ page }) => {
-    //  locate nav link Community by role and text
-    const communityLink = page.getByRole("link", { name: "Community" });
-    await communityLink.waitFor({ state: "visible" });
-
-    // click the loacted element
-    await communityLink.click();
-    //expect the current pag to have passed url
-    await expect(page).toHaveURL("https://playwright.dev/community/welcome");
-
-    const headingTwo = page.getByRole("heading", { name: "Ambassadors" });
-    await expect(headingTwo).toBeVisible();
-  });
-
-  test("Select Playwright env from the list", async ({ page }) => {
-    const initialEnv = page.getByRole("button", { name: "Node.js" });
-
-    await initialEnv.hover();
-
-    const envList = page.locator(".dropdown__menu");
-    await expect(envList).toBeVisible();
-
-    const listItem = page.locator("ul.dropdown__menu a").getByText("Python");
-    await listItem.click();
-    await expect(page).toHaveURL("https://playwright.dev/python/");
-  });
-
-  test("Check if logos list exist", async ({ page }) => {
-    // locate logos list by locator class name syntax
-    const logosListItems = page.locator("ul.logosList_zAAF li");
-    // expect the count of list items
-    await expect(logosListItems).toHaveCount(9);
+    const usernameVal = page.locator('xpath=//li[@id="_valueusername"]');
+    await expect(usernameVal).toHaveText("testUser-");
+    const dropdownValue = page.locator('xpath=//li[@id="_valuedropdown"]');
+    await expect(dropdownValue).toHaveText("dd2");
   });
 });
