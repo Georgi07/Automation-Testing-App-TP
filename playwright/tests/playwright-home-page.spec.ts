@@ -63,7 +63,7 @@ test.describe("Testing Web Form", () => {
     await expect(title).toHaveText("Processed Form Details");
 
     const usernameVal = page.locator('xpath=//li[@id="_valueusername"]');
-    await expect(usernameVal).toHaveText("testUser-");
+    await expect(usernameVal).toHaveText("testUser");
     const dropdownValue = page.locator('xpath=//li[@id="_valuedropdown"]');
     await expect(dropdownValue).toHaveText("dd2");
   });
